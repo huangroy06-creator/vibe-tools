@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f6f2">
+  <meta name="description" content="WordNest 英文單字練習室：用單字庫、記憶卡和互動測驗，讓每天的英文學習更輕鬆。">
+  <title>WordNest｜英文單字練習室</title>
+  <style>
+    :root { --bg:#f7f6f2; --panel:#fff; --ink:#243733; --muted:#6c7c77; --line:#e5e9e4; --green:#246d59; --greenlight:#e6f4ec; --yellow:#fff1c5; --red:#ba5447; --redlight:#fcebe7; --shadow:0 16px 42px rgba(31,56,48,.045); }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.5}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #83c5ac;outline-offset:3px}
+    .wrap{width:min(1080px,calc(100% - 44px));margin:auto}
+    .header{background:rgba(255,255,255,.73);border-bottom:1px solid var(--line)}
+    .header-inner{height:74px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+    .logo{width:40px;height:40px;display:grid;place-items:center;background:var(--green);color:white;font-weight:900;border-radius:13px;font-size:21px;transform:rotate(-5deg)}
+    .brand strong{display:block;font-size:20px;letter-spacing:-.6px;line-height:1.2}
+    .brand small{font-size:11px;color:var(--muted);letter-spacing:1.1px}
+    .header-note{font-size:13px;color:var(--muted)}
+    .hero{display:grid;grid-template-columns:1fr auto;align-items:center;gap:18px;padding:42px 0 24px}
+    .eyebrow{color:var(--green);font-size:13px;font-weight:800;letter-spacing:1.4px}
+    h1{font-size:clamp(28px,4.6vw,43px);margin:8px 0 10px;letter-spacing:-1.6px;line-height:1.18}
+    h1 em{font-style:normal;color:var(--green)}
+    .lead{margin:0;color:var(--muted);font-size:15px}
+    .hero-art{width:157px;height:110px;position:relative;flex:none;display:grid;place-items:center}
+    .art-card{position:absolute;background:#fff;border:1px solid #d8e9e0;box-shadow:var(--shadow);border-radius:16px;padding:15px 20px;font-weight:900;font-size:19px;transform:rotate(-9deg);top:18px;left:5px}
+    .art-card.alt{background:#d1ecdb;transform:rotate(12deg);top:42px;left:53px;color:#236451}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:25px}
+    .stat{padding:22px 23px;background:var(--panel);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .stat .n{font-size:30px;line-height:1.05;font-weight:900;letter-spacing:-1.5px;display:block;margin-top:6px}
+    .stat small{color:var(--muted);font-size:13px}
+    .stat .glyph{height:43px;width:43px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:var(--greenlight)}
+    .stat:nth-child(2) .glyph{background:var(--yellow)}
+    .stat:nth-child(3) .glyph{background:#f0edfe}
+    .workspace{background:var(--panel);border:1px solid var(--line);border-radius:23px;box-shadow:var(--shadow);overflow:hidden}
+    .tabs{display:flex;padding:12px;gap:8px;background:#fcfdfb;border-bottom:1px solid var(--line)}
+    .tab{border:0;background:transparent;color:#63716d;padding:12px 18px;border-radius:12px;font-weight:750;flex:1}
+    .tab[aria-selected="true"]{background:var(--green);color:white;box-shadow:0 5px 12px rgba(36,109,89,.14)}
+    .panel{padding:29px 30px 32px}
+    .panel[hidden], [hidden]{display:none!important}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+    h2{font-size:22px;letter-spacing:-.5px;line-height:1.25;margin:0 0 7px}
+    .sub{margin:0;color:var(--muted);font-size:13px}
+    .btn{border:1px solid var(--line);border-radius:11px;padding:10px 16px;background:white;color:var(--ink);font-weight:750;white-space:nowrap;transition:.15s}
+    .btn:hover{background:#f4f7f5;transform:translateY(-1px)}
+    .btn-primary{background:var(--green);color:white;border-color:var(--green)}
+    .btn-primary:hover{background:#1e5747}
+    .btn-soft{color:var(--green);background:var(--greenlight);border-color:var(--greenlight)}
+    .btn-red{color:var(--red);border-color:#f1ccc5;background:#fffafa}
+    .btn-sm{padding:7px 10px;border-radius:9px;font-size:12px}
+    .controls{display:grid;grid-template-columns:1fr 168px;gap:12px;margin-bottom:19px}
+    input,select{width:100%;border:1px solid #dae3dd;border-radius:11px;padding:12px 13px;outline:none;background:#fff;color:var(--ink);font-size:14px}
+    input::placeholder{color:#9ba8a2}
+    label{font-size:13px;font-weight:750;display:block;margin-bottom:7px}
+    .word-list{display:grid;gap:10px}
+    .word-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:15px;padding:15px 16px}
+    .word-main{min-width:0}
+    .word-title{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .en{font-size:18px;font-weight:900;letter-spacing:-.3px}
+    .tag{padding:3px 8px;font-size:11px;background:#f1f6f2;color:#64826f;border-radius:7px;font-weight:750}
+    .tag.done{background:var(--greenlight);color:var(--green)}
+    .zh{margin:4px 0 0;font-size:14px;color:#52645d}
+    .example{font-size:12px;color:#899791;margin:5px 0 0;overflow-wrap:anywhere}
+    .word-actions{display:flex;gap:6px;align-items:center}
+    .icon-btn{border:1px solid transparent;background:transparent;border-radius:9px;color:#6a8277;width:33px;height:33px;font-size:17px;display:grid;place-items:center}
+    .icon-btn:hover{background:#f0f6f2}
+    .fav-on{color:#e1a130}
+    .word-form{margin-bottom:20px;background:#f6faf7;border:1px solid #dcebe2;border-radius:16px;padding:19px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:12px}
+    .form-grid .full{grid-column:1/-1}
+    .form-actions{display:flex;gap:8px;justify-content:flex-end}
+    .empty{border:1px dashed #cbd8d0;text-align:center;border-radius:16px;padding:40px 16px;color:var(--muted)}
+    .count-line{font-size:12px;color:var(--muted);padding:14px 2px 0}
+    .card-settings{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:17px}
+    .checkline{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px;margin:0;color:#52675d}
+    .checkline input{width:auto;accent-color:var(--green);padding:0}
+    .flash{height:285px;perspective:1000px;cursor:pointer;width:min(100%,610px);display:block;margin:15px auto 22px;padding:0;border:0;border-radius:21px;background:transparent;text-align:center}
+    .flash-inner{display:block;position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s}
+    .flash.flipped .flash-inner{transform:rotateY(180deg)}
+    .flash-face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid #cfe3d7;border-radius:21px;background:linear-gradient(145deg,#ecf8f0 0%,#ffffff 92%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px;box-shadow:0 18px 45px rgba(35,80,58,.065)}
+    .flash-back{transform:rotateY(180deg);background:linear-gradient(145deg,#fff9e9 0%,#fff 90%);border-color:#f5e5b7}
+    .card-label{font-size:12px;letter-spacing:2px;font-weight:800;color:#7c9485}
+    .flash-word{font-size:clamp(30px,6vw,48px);font-weight:900;overflow-wrap:anywhere;line-height:1.2;margin:18px 0}
+    .flash-hint{font-size:13px;color:#869990}
+    .flash-example{font-size:15px;color:#65726a;max-width:480px;margin:14px 0 0;overflow-wrap:anywhere}
+    .card-controls{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+    .card-progress{font-size:13px;color:var(--muted);font-weight:750;min-width:82px;text-align:center}
+    .card-voice{display:block;margin:14px auto 0}
+    .quiz-welcome{background:linear-gradient(135deg,#edf7f0,#fff7e6);border-radius:20px;text-align:center;padding:43px 24px}
+    .quiz-emoji{font-size:50px;margin-bottom:11px}
+    .quiz-welcome h3{font-size:24px;margin:3px 0 8px}
+    .quiz-welcome p{margin:0 auto 20px;color:var(--muted);max-width:400px}
+    .quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--muted)}
+    .progress-bg{background:#eaf0eb;border-radius:100px;height:9px;overflow:hidden;margin-bottom:24px}
+    .progress-bar{height:100%;width:0;background:var(--green);border-radius:100px;transition:width .25s}
+    .quiz-question{background:#f7fbf8;border:1px solid #dfebe3;border-radius:17px;padding:27px;text-align:center;margin-bottom:18px}
+    .quiz-question small{color:var(--muted)}
+    .quiz-question h3{font-size:32px;margin:9px 0 0;overflow-wrap:anywhere}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .option{padding:17px 15px;min-height:62px;background:white;border:1px solid #dfe8e1;border-radius:13px;font-size:16px;font-weight:800;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+    .option:hover:not(:disabled){background:#f5fbf6;border-color:#77b99e}
+    .option.right{background:#e7f5ec;border:2px solid #5db587;color:#1e6d4b}
+    .option.wrong{background:#ffefeb;border:2px solid #d77c6b;color:#ac4e40}
+    .option:disabled{cursor:default}
+    .feedback{text-align:center;min-height:29px;margin:15px 0;color:#47735c;font-size:14px;font-weight:750}
+    .quiz-bottom{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .quiz-end{text-align:center;background:#f7faf7;border-radius:18px;padding:37px 16px}
+    .quiz-end .big{font-size:55px;font-weight:900;color:var(--green)}
+    .utility{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:23px 2px 40px}
+    .utility-copy{font-size:12px;color:var(--muted)}
+    .utility-actions{display:flex;gap:9px;flex-wrap:wrap}
+    .utility label{margin:0;cursor:pointer}
+    .footer{border-top:1px solid var(--line);padding:25px 0 36px;color:#8d9992;font-size:12px;text-align:center}
+    .toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,18px);background:#243c32;color:white;padding:11px 18px;border-radius:13px;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 12px 35px #223b3260;font-size:13px;z-index:20;text-align:center;max-width:90%}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:680px){.wrap{width:min(100% - 26px,1080px)}.header-inner{height:64px}.header-note{display:none}.hero{padding:29px 0 19px}.hero-art{display:none}.stats{gap:8px}.stat{padding:16px 13px;border-radius:14px}.stat .n{font-size:25px}.stat small{font-size:11px}.stat .glyph{display:none}.tabs{padding:8px;gap:3px}.tab{font-size:13px;padding:11px 5px}.panel{padding:20px 16px 25px}.topline{align-items:flex-start}.btn{padding:10px 12px;font-size:13px}.controls{grid-template-columns:1fr}.word-item{grid-template-columns:1fr}.word-actions{justify-content:flex-end;border-top:1px solid #eef1ee;padding-top:7px}.form-grid{grid-template-columns:1fr}.options{grid-template-columns:1fr}.flash{height:260px}.quiz-bottom{flex-direction:column;align-items:stretch}.quiz-bottom .btn{width:100%}.utility{align-items:flex-start}.stat .n{letter-spacing:-.6px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="WordNest 回到首頁"><span class="logo" aria-hidden="true">W</span><span><strong>WordNest</strong><small>ENGLISH LEARNING SPACE</small></span></a>
+    <span class="header-note">🌱 讓英文進步，從每天一點點開始。</span>
+  </div>
+</header>
+<main id="top" class="wrap">
+  <section class="hero" aria-labelledby="welcomeTitle">
+    <div><div class="eyebrow">YOUR DAILY ENGLISH COMPANION</div><h1 id="welcomeTitle">每天 5 分鐘，<br><em>讓單字慢慢變熟悉。</em></h1><p class="lead">收藏新單字、翻翻記憶卡，再來一場小測驗吧！</p></div>
+    <div class="hero-art" aria-hidden="true"><div class="art-card">Hello!</div><div class="art-card alt">你好 ♡</div></div>
+  </section>
+  <section class="stats" aria-label="學習統計">
+    <div class="stat"><div><small>單字庫總數</small><span class="n" id="statTotal">0</span></div><span class="glyph" aria-hidden="true">📚</span></div>
+    <div class="stat"><div><small>已掌握單字</small><span class="n" id="statMastered">0</span></div><span class="glyph" aria-hidden="true">🌟</span></div>
+    <div class="stat"><div><small>累計答對率</small><span class="n" id="statAccuracy">—</span></div><span class="glyph" aria-hidden="true">🎯</span></div>
+  </section>
+  <section class="workspace" aria-label="WordNest 學習功能">
+    <nav class="tabs" aria-label="學習功能切換">
+      <button class="tab" id="tabWords" data-tab="words" aria-controls="words" aria-selected="true">📖 單字庫</button>
+      <button class="tab" id="tabCards" data-tab="cards" aria-controls="cards" aria-selected="false">🗂️ 單字卡</button>
+      <button class="tab" id="tabQuiz" data-tab="quiz" aria-controls="quiz" aria-selected="false">📝 小測驗</button>
+    </nav>
+    <div id="words" class="panel" role="region" aria-labelledby="tabWords">
+      <div class="topline"><div><h2>我的單字庫</h2><p class="sub">把想記住的單字，全部收進這裡。</p></div><button class="btn btn-primary" id="addToggle" type="button">＋ 新增單字</button></div>
+      <form id="wordForm" class="word-form" hidden>
+        <h3 id="formTitle" style="margin:0 0 14px;font-size:17px">新增單字</h3>
+        <div class="form-grid">
+          <div><label for="inputEn">英文單字 *</label><input id="inputEn" maxlength="60" autocomplete="off" placeholder="例如：confidence" required></div>
+          <div><label for="inputZh">中文意思 *</label><input id="inputZh" maxlength="100" autocomplete="off" placeholder="例如：自信" required></div>
+          <div class="full"><label for="inputExample">英文例句（選填）</label><input id="inputExample" maxlength="240" placeholder="I want to build my confidence."></div>
+          <div><label for="inputCategory">分類</label><select id="inputCategory"><option value="日常英文">日常英文</option><option value="學術 / 工作">學術 / 工作</option><option value="其他">其他</option></select></div>
+        </div>
+        <div class="form-actions"><button class="btn" type="button" id="cancelForm">取消</button><button class="btn btn-primary" type="submit" id="saveWord">加入單字庫</button></div>
+      </form>
+      <div class="controls"><input id="searchWord" type="search" aria-label="搜尋單字" placeholder="🔎 搜尋英文單字或中文意思..."><select id="filterWord" aria-label="篩選單字"><option value="all">全部單字</option><option value="favorite">只看收藏 ★</option><option value="unmastered">尚未掌握</option><option value="mastered">已掌握</option></select></div>
+      <div class="word-list" id="wordList"></div><div class="count-line" id="wordCount" aria-live="polite"></div>
+    </div>
+    <div id="cards" class="panel" role="region" aria-labelledby="tabCards" hidden>
+      <div class="topline"><div><h2>翻翻單字卡</h2><p class="sub">先想答案，再點一下卡片看中文意思。</p></div></div>
+      <div class="card-settings"><label class="checkline"><input id="unmasteredOnly" type="checkbox"> 只練習尚未掌握的單字</label><span id="cardSummary" class="sub"></span></div>
+      <div id="cardZone">
+        <button id="flashCard" type="button" class="flash" aria-label="翻面查看單字卡答案"><span class="flash-inner"><span class="flash-face"><span class="card-label">ENGLISH</span><span class="flash-word" id="flashEn">Hello</span><span class="flash-hint">點擊翻面查看中文意思 ↻</span></span><span class="flash-face flash-back"><span class="card-label">中文意思</span><span class="flash-word" id="flashZh">你好</span><span class="flash-example" id="flashExample"></span></span></span></button>
+        <div class="card-controls"><button id="prevCard" class="btn" type="button">← 上一張</button><span id="cardPosition" class="card-progress"></span><button id="nextCard" class="btn" type="button">下一張 →</button><button id="masterCard" class="btn btn-soft" type="button">✓ 標記為已掌握</button></div>
+        <button id="speakCard" class="btn btn-sm card-voice" type="button">🔊 聽英文發音</button>
+      </div>
+      <div class="empty" id="cardEmpty" hidden>目前沒有符合條件的單字。<br>前往「單字庫」新增，或取消「只練習尚未掌握」。</div>
+    </div>
+    <div id="quiz" class="panel" role="region" aria-labelledby="tabQuiz" hidden>
+      <div class="topline"><div><h2>英文單字小測驗</h2><p class="sub">看中文意思，從四個英文單字中選出正確答案。</p></div></div>
+      <div id="quizWelcome" class="quiz-welcome"><div class="quiz-emoji" aria-hidden="true">🧠</div><h3>準備好挑戰了嗎？</h3><p>每回合最多 10 題，答錯的單字也會記錄下來，下次繼續練習！</p><button id="startQuiz" type="button" class="btn btn-primary">開始測驗 →</button><p id="quizWarning" class="sub" style="margin-top:14px"></p></div>
+      <div id="quizPlay" hidden>
+        <div class="quiz-meta"><span id="quizStep">第 1 題</span><span id="quizScore">答對 0 題</span></div><div class="progress-bg"><div class="progress-bar" id="quizProgress"></div></div>
+        <div class="quiz-question"><small>以下中文意思，對應哪個英文單字？</small><h3 id="quizZh">自信</h3></div>
+        <div class="options" id="quizOptions"></div><div id="quizFeedback" class="feedback" aria-live="polite"></div>
+        <div class="quiz-bottom"><span class="sub">答完後按「下一題」繼續。</span><button class="btn btn-primary" id="quizNext" type="button" disabled>下一題 →</button></div>
+      </div>
+      <div id="quizResult" class="quiz-end" hidden><div aria-hidden="true" style="font-size:32px">🎉</div><h2>測驗完成！</h2><div class="big" id="finalScore">0 / 10</div><p class="sub" id="finalMessage" style="margin:0 0 19px">好棒！繼續保持學習。</p><button class="btn btn-primary" id="quizAgain" type="button">再挑戰一次 ↻</button></div>
+    </div>
+  </section>
+  <section class="utility" aria-label="資料備份與還原">
+    <div class="utility-copy">🔒 單字與學習紀錄儲存在此瀏覽器，不會上傳至伺服器。建議定期備份。</div>
+    <div class="utility-actions"><button class="btn btn-sm" id="exportData" type="button">↓ 下載備份</button><label class="btn btn-sm" for="importData">↑ 匯入備份</label><input id="importData" type="file" accept=".json,application/json" style="display:none"></div>
+  </section>
+</main>
+<footer class="footer">Made with ♡ and Vibe Coding · WordNest 2026</footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+(() => {
+  const WORDS_KEY = 'wordnest.words.v1';
+  const STATS_KEY = 'wordnest.stats.v1';
+  const starter = [
+    ['confidence','自信','I want to build my confidence.','日常英文'],
+    ['improve','改善；進步','I practice English to improve my speaking.','日常英文'],
+    ['schedule','行程；安排','Let me check my schedule.','日常英文'],
+    ['hesitate','猶豫','Do not hesitate to ask questions.','日常英文'],
+    ['comfortable','舒適的；自在的','I feel comfortable speaking with friends.','日常英文'],
+    ['challenge','挑戰','Learning a new skill is a challenge.','日常英文'],
+    ['progress','進步；進展','Small steps lead to progress.','日常英文'],
+    ['habit','習慣','Reading every day is a good habit.','日常英文'],
+    ['research','研究','Our research focuses on optical devices.','學術 / 工作'],
+    ['measure','測量','We measure the signal using an instrument.','學術 / 工作'],
+    ['accurate','準確的','We need accurate results.','學術 / 工作'],
+    ['analyze','分析','I need to analyze the experimental data.','學術 / 工作'],
+    ['alignment','對準；校準','Proper alignment improves the measurement.','學術 / 工作'],
+    ['experiment','實驗','The experiment starts at nine.','學術 / 工作'],
+    ['efficient','有效率的','This is an efficient solution.','學術 / 工作'],
+    ['present','報告；呈現','I will present my project tomorrow.','學術 / 工作']
+  ];
+  const $ = (id) => document.getElementById(id);
+  const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+  const makeWord = (en,zh,example,category) => ({id:uid(),en,zh,example,category,favorite:false,mastered:false,correct:0,wrong:0});
+  const limit = (value,max) => String(value ?? '').trim().slice(0,max);
+  const categories = ['日常英文','學術 / 工作','其他'];
+  function cleanWord(w) {
+    if(!w || typeof w !== 'object' || typeof w.en !== 'string' || typeof w.zh !== 'string') return null;
+    const en=limit(w.en,60),zh=limit(w.zh,100);
+    if(!en || !zh) return null;
+    return {id:uid(),en,zh,example:limit(w.example,240),category:categories.includes(w.category)?w.category:'其他',favorite:w.favorite===true,mastered:w.mastered===true,correct:Math.max(0,Math.min(100000,Number(w.correct)||0)),wrong:Math.max(0,Math.min(100000,Number(w.wrong)||0))};
+  }
+  function loadWords(){
+    try {const raw=localStorage.getItem(WORDS_KEY); if(raw !== null){const data=JSON.parse(raw);if(Array.isArray(data)) return data.slice(0,2000).map(cleanWord).filter(Boolean);}}
+    catch(e){ console.warn('讀取單字失敗',e); }
+    return starter.map(w=>makeWord(...w));
+  }
+  function loadStats(){try{const x=JSON.parse(localStorage.getItem(STATS_KEY)); if(x && typeof x==='object')return {answered:Math.max(0,Number(x.answered)||0),correct:Math.max(0,Number(x.correct)||0)}}catch(e){} return {answered:0,correct:0};}
+  let words=loadWords(),stats=loadStats(),editId=null,cardIndex=0,activeTab='words',quiz=null,toastTimer=null;
+  function persist(){try{localStorage.setItem(WORDS_KEY,JSON.stringify(words));localStorage.setItem(STATS_KEY,JSON.stringify(stats));}catch(e){notify('瀏覽器無法儲存資料，請匯出備份！');}}
+  function notify(message){const t=$('toast'); t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3200);}
+  function el(tag,cls,textValue){const x=document.createElement(tag);if(cls)x.className=cls;if(textValue!==undefined)x.textContent=textValue;return x;}
+  function mkBtn(text,kind,action,word){const b=el('button',kind,text);b.type='button';b.dataset.action=action;b.dataset.id=word.id;return b;}
+  function renderStats(){
+    $('statTotal').textContent=words.length;
+    $('statMastered').textContent=words.filter(w=>w.mastered).length;
+    $('statAccuracy').textContent=stats.answered?Math.round(100*stats.correct/stats.answered)+'%':'—';
+  }
+  function filteredWords(){const q=$('searchWord').value.trim().toLocaleLowerCase(),filter=$('filterWord').value;return words.filter(w=>{
+    if(q && ![w.en,w.zh,w.example].some(v=>v.toLocaleLowerCase().includes(q)))return false;
+    if(filter==='favorite'&&!w.favorite)return false;
+    if(filter==='mastered'&&!w.mastered)return false;
+    if(filter==='unmastered'&&w.mastered)return false;
+    return true;
+  });}
+  function renderWords(){
+    const list=$('wordList');list.replaceChildren();const items=filteredWords();
+    if(!items.length){list.append(el('div','empty',words.length?'找不到符合條件的單字，試試其他搜尋條件吧。':'單字庫還沒有單字，點「新增單字」開始吧！'));}
+    for(const w of items){
+      const row=el('article','word-item'),main=el('div','word-main'),top=el('div','word-title'),name=el('span','en',w.en),category=el('span','tag',w.category);
+      top.append(name,category);if(w.mastered)top.append(el('span','tag done','✓ 已掌握'));
+      main.append(top,el('p','zh',w.zh));if(w.example)main.append(el('p','example',w.example));
+      const acts=el('div','word-actions');
+      const say=mkBtn('🔊','icon-btn','speak',w);say.setAttribute('aria-label','播放 '+w.en+' 發音');say.title='發音';
+      const fav=mkBtn(w.favorite?'★':'☆','icon-btn'+(w.favorite?' fav-on':''),'favorite',w);fav.setAttribute('aria-label',w.favorite?'移除收藏':'加入收藏');fav.title='收藏';
+      const mastered=mkBtn(w.mastered?'取消掌握':'已掌握','btn btn-sm','master',w);
+      const edit=mkBtn('編輯','btn btn-sm','edit',w);
+      const del=mkBtn('刪除','btn btn-sm btn-red','delete',w);
+      acts.append(say,fav,mastered,edit,del);row.append(main,acts);list.append(row);
+    }
+    $('wordCount').textContent=`顯示 ${items.length} 個單字（共 ${words.length} 個）`;
+  }
+  function render(){renderStats();renderWords();renderCard();}
+  function switchTab(tab){activeTab=tab;for(const name of ['words','cards','quiz']){$(name).hidden=(name!==tab);$('tab'+name[0].toUpperCase()+name.slice(1)).setAttribute('aria-selected',String(name===tab));}if(tab==='cards')renderCard();if(tab==='quiz')renderQuizWelcome();}
+  function resetForm() {editId=null;$('wordForm').reset();$('wordForm').hidden=true;$('formTitle').textContent='新增單字';$('saveWord').textContent='加入單字庫';}
+  function openForm(word){$('wordForm').hidden=false;editId=word?word.id:null;$('formTitle').textContent=word?'編輯單字':'新增單字';$('saveWord').textContent=word?'儲存修改':'加入單字庫';$('inputEn').value=word?word.en:'';$('inputZh').value=word?word.zh:'';$('inputExample').value=word?word.example:'';$('inputCategory').value=word?word.category:'日常英文';$('inputEn').focus();}
+  function cardsList(){return $('unmasteredOnly').checked?words.filter(w=>!w.mastered):words;}
+  function renderCard(){const cards=cardsList();$('cardSummary').textContent=`${cards.length} 個可練習單字`;$('cardZone').hidden=!cards.length;$('cardEmpty').hidden=!!cards.length;if(!cards.length)return;
+    cardIndex=((cardIndex%cards.length)+cards.length)%cards.length;const w=cards[cardIndex];$('flashCard').classList.remove('flipped');$('flashEn').textContent=w.en;$('flashZh').textContent=w.zh;$('flashExample').textContent=w.example;$('cardPosition').textContent=`${cardIndex+1} / ${cards.length}`;$('masterCard').textContent=w.mastered?'↩ 取消已掌握':'✓ 標記為已掌握';}
+  function currentCard(){return cardsList()[cardIndex]}
+  function speak(text){if(!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)){notify('此瀏覽器不支援語音朗讀');return;}window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-US';utterance.rate=.84;window.speechSynthesis.speak(utterance);}
+  const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  function renderQuizWelcome(){if(quiz)return;$('quizWarning').textContent=words.length<4?'至少需要 4 個單字才能進行四選一測驗。':`目前共有 ${words.length} 個單字可出題。`;$('startQuiz').disabled=words.length<4;}
+  function beginQuiz(){if(words.length<4){notify('至少先新增 4 個單字！');return;}const chosen=shuffle(words).slice(0,10);quiz={questions:chosen.map(w=>({id:w.id,en:w.en,zh:w.zh,options:shuffle([w.en,...shuffle(words.filter(x=>x.id!==w.id)).slice(0,3).map(x=>x.en)])})),index:0,score:0,answered:false};$('quizWelcome').hidden=true;$('quizResult').hidden=true;$('quizPlay').hidden=false;renderQuestion();}
+  function renderQuestion(){const q=quiz.questions[quiz.index];quiz.answered=false;$('quizStep').textContent=`第 ${quiz.index+1} / ${quiz.questions.length} 題`;$('quizScore').textContent=`答對 ${quiz.score} 題`;$('quizProgress').style.width=(100*quiz.index/quiz.questions.length)+'%';$('quizZh').textContent=q.zh;$('quizFeedback').textContent='';$('quizNext').disabled=true;$('quizNext').textContent=quiz.index===quiz.questions.length-1?'查看成績 →':'下一題 →';const area=$('quizOptions');area.replaceChildren();for(const option of q.options){const btn=el('button','option',option);btn.type='button';btn.dataset.answer=option;area.append(btn);}}
+  function chooseAnswer(value){if(!quiz || quiz.answered)return;quiz.answered=true;const q=quiz.questions[quiz.index],right=value===q.en;if(right)quiz.score++;stats.answered++;if(right)stats.correct++;const w=words.find(x=>x.id===q.id);if(w){if(right)w.correct++;else w.wrong++;}
+    for(const btn of $('quizOptions').children){btn.disabled=true;if(btn.dataset.answer===q.en)btn.classList.add('right');else if(btn.dataset.answer===value)btn.classList.add('wrong');}
+    $('quizFeedback').textContent=right?'✓ 答對了！繼續保持！':`還差一點！正確答案是 ${q.en}`;$('quizScore').textContent=`答對 ${quiz.score} 題`;$('quizNext').disabled=false;persist();renderStats();}
+  function nextQuestion(){if(!quiz || !quiz.answered)return;quiz.index++;if(quiz.index>=quiz.questions.length){$('quizPlay').hidden=true;$('quizResult').hidden=false;$('finalScore').textContent=`${quiz.score} / ${quiz.questions.length}`;$('finalMessage').textContent=quiz.score===quiz.questions.length?'滿分！你的記憶力超棒！':'每次複習都會更進步，明天再挑戰一次！';quiz=null;}else renderQuestion();}
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+  $('searchWord').addEventListener('input',renderWords);$('filterWord').addEventListener('change',renderWords);
+  $('addToggle').addEventListener('click',()=>{$('wordForm').hidden?openForm(null):resetForm()});$('cancelForm').addEventListener('click',resetForm);
+  $('wordForm').addEventListener('submit',(event)=>{event.preventDefault();const en=$('inputEn').value.trim(),zh=$('inputZh').value.trim(),example=$('inputExample').value.trim(),category=$('inputCategory').value;
+    if(!en||!zh){notify('英文單字和中文意思不可空白');return;}
+    const duplicate=words.some(w=>w.en.toLocaleLowerCase()===en.toLocaleLowerCase() && w.id!==editId);if(duplicate){notify('這個英文單字已經在單字庫裡了');return;}
+    if(editId){const w=words.find(x=>x.id===editId);if(w)Object.assign(w,{en,zh,example,category});notify('單字已修改！');}else{words.unshift(makeWord(en,zh,example,category));notify('成功加入單字庫！');}resetForm();persist();render();});
+  $('wordList').addEventListener('click',(e)=>{const b=e.target.closest('button[data-action]');if(!b)return;const w=words.find(x=>x.id===b.dataset.id);if(!w)return;switch(b.dataset.action){case 'speak':speak(w.en);return;case 'favorite':w.favorite=!w.favorite;notify(w.favorite?'已加入收藏':'已移除收藏');break;case 'master':w.mastered=!w.mastered;notify(w.mastered?'已標記為已掌握':'已取消掌握標記');break;case 'edit':openForm(w);$('wordForm').scrollIntoView({behavior:'smooth',block:'nearest'});return;case 'delete':if(!window.confirm(`確定刪除「${w.en}」嗎？`))return;words=words.filter(x=>x.id!==w.id);if(editId===w.id)resetForm();notify('單字已刪除');break;}persist();render();});
+  $('unmasteredOnly').addEventListener('change',()=>{cardIndex=0;renderCard()});
+  $('flashCard').addEventListener('click',()=>{$('flashCard').classList.toggle('flipped')});
+  $('prevCard').addEventListener('click',()=>{cardIndex--;renderCard()});$('nextCard').addEventListener('click',()=>{cardIndex++;renderCard()});
+  $('masterCard').addEventListener('click',()=>{const w=currentCard();if(!w)return;w.mastered=!w.mastered;persist();render();notify(w.mastered?'太棒了，已標記掌握！':'已取消掌握標記');});
+  $('speakCard').addEventListener('click',()=>{const w=currentCard();if(w)speak(w.en)});
+  $('startQuiz').addEventListener('click',beginQuiz);$('quizAgain').addEventListener('click',beginQuiz);$('quizOptions').addEventListener('click',(e)=>{const btn=e.target.closest('button[data-answer]');if(btn)chooseAnswer(btn.dataset.answer)});$('quizNext').addEventListener('click',nextQuestion);
+  $('exportData').addEventListener('click',()=>{const payload={app:'WordNest',version:1,exportedAt:new Date().toISOString(),words,stats};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='wordnest-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('備份檔案已開始下載');});
+  $('importData').addEventListener('change',async(e)=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;
+    if(file.size>2*1024*1024){notify('備份檔過大（上限 2MB）');return;}
+    try{const raw=JSON.parse(await file.text());if(!raw||raw.app!=='WordNest'||!Array.isArray(raw.words)||raw.words.length>2000)throw new Error('format');const imported=raw.words.map(cleanWord).filter(Boolean),seen=new Set(),deduped=imported.filter(w=>{const key=w.en.toLocaleLowerCase();if(seen.has(key))return false;seen.add(key);return true;});
+      if(raw.words.length && !deduped.length)throw new Error('empty');if(!window.confirm(`確定匯入 ${deduped.length} 個單字？這會取代目前的單字庫和答題紀錄。`))return;
+      words=deduped;stats={answered:Math.max(0,Math.min(10000000,Number(raw.stats?.answered)||0)),correct:Math.max(0,Math.min(10000000,Number(raw.stats?.correct)||0))};if(stats.correct>stats.answered)stats.correct=stats.answered;cardIndex=0;quiz=null;$('quizPlay').hidden=true;$('quizResult').hidden=true;$('quizWelcome').hidden=false;resetForm();persist();render();renderQuizWelcome();notify('匯入成功！');
+    }catch(err){notify('匯入失敗：請選擇 WordNest 匯出的 JSON 備份檔');}
+  });
+  // 首次使用先儲存範例單字；之後讀取使用者自己的單字庫。
+  try {if(localStorage.getItem(WORDS_KEY)===null)persist();} catch(e){console.warn('此瀏覽器限制本機儲存',e);}
+  render();renderQuizWelcome();
+})();
+</script>
+</body>
+</html>
